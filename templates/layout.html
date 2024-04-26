@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Belge karakter kodlamasını UTF-8 olarak ayarlar -->
+    <meta charset="UTF-8">
+    <!-- Görünüm portunu ayarlar, sayfanın mobil cihazlarda uygun şekilde görüntülenmesini sağlar -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Sayfa başlığı -->
+    <title>QUIZAPP</title>
+    <!-- Bootstrap CSS dosyasını dahil eder -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery kütüphanesini dahil eder -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Chart.js kütüphanesini dahil eder  -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <!-- Başlık bloğu için yer tutucu, türetilmiş şablonlar bu bloğu özelleştirebilir -->
+    {% block head %}
+
+    {% endblock %}
+</head>
+<body>
+    <!-- Navbar partial'ını içerir, bu, tekrarlanan navbar yapısını başka dosyadan çeker -->
+    {% include 'partials/_navbar.html' %}
+
+    <!-- İçerik div'i, içerik bloğunu çevreler -->
+    <div class="icerik">
+        <!-- İçerik bloğu için yer tutucu, türetilmiş şablonlar bu bloğu doldurabilir -->
+        {% block content %}
+        base html
+        {% endblock %}
+    </div>
+    
+    <!-- İçerik div'i için CSS stilleri, sol ve üst marjlar belirler -->
+    <style>
+        .icerik {
+            margin-left: 300px;
+            margin-top: 50px;
+        }
+    </style>
+
+    <!-- jQuery, Popper.js, ve Bootstrap JS dosyalarını dahil eder -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

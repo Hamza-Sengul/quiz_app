@@ -1,0 +1,75 @@
+<div class="sidebar">
+    <!-- Kullanıcı profil bilgisi -->
+    <div class="profile-info">
+        <h2>{{user.username}}</h2> <!-- Kullanıcı adı dinamik olarak gösterilir -->
+        <p>Turkey</p> <!-- Sabit bir bilgi -->
+    </div>
+    <!-- Navigasyon bağlantıları -->
+    <a href="{% url 'dashboard' %}" class="active">Dashboard</a> <!-- Aktif sayfa -->
+    <a href="{% url 'denetim' %}">Denetimler</a> <!-- Denetimler sayfasına bağlantı -->
+    <a href="{% url 'select_category' %}">Quiz</a> <!-- Quiz sayfasına bağlantı -->
+    <a href="{% url 'result_page' %}">Results</a> <!-- Sonuçlar sayfasına bağlantı -->
+    <!-- Eğer kullanıcı yetkili personelse ek yönetim bağlantıları gösterilir -->
+    {% if user.is_staff %}
+        <a href="#">Manage</a> <!-- Yönetim sayfası için placeholder bağlantı -->
+        <a href="{% url 'settings' %}">Settings</a> <!-- Ayarlar sayfasına bağlantı -->
+        <a href="{% url 'add_question' %}">Add Questions</a> <!-- Soru ekleme sayfasına bağlantı -->
+        <a href="{% url 'add_category' %}">Add category</a> <!-- Kategori ekleme sayfasına bağlantı -->
+    {% endif %}
+    <a href="{% url 'logout' %}">Logout</a> <!-- Çıkış yapma bağlantısı -->
+</div>
+
+<!-- Sidebar için CSS stil tanımlamaları -->
+<style>
+    body {
+        font-family: 'Arial', sans-serif; /* Yazı tipi */
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4; /* Arka plan rengi */
+    }
+    
+    .sidebar {
+        height: 100%; /* Yükseklik */
+        width: 250px; /* Genişlik */
+        position: absolute; /* Pozisyonlama */
+        z-index: 1; /* Z-index */
+        top: 0; /* Üstten konumlandırma */
+        left: 0; /* Soldan konumlandırma */
+        background-color: #2c3e50; /* Arka plan rengi */
+        overflow-x: hidden; /* X ekseninde taşmayı gizle */
+        padding-top: 20px; /* Üstten boşluk */
+    }
+    
+    .sidebar a {
+        padding: 15px 10px 15px 30px; /* Bağlantıların padding'i */
+        text-decoration: none; /* Bağlantı alt çizgisini kaldır */
+        font-size: 18px; /* Yazı boyutu */
+        color: white; /* Yazı rengi */
+        display: block; /* Block seviyesinde görüntüleme */
+    }
+    
+    .sidebar a.active {
+        background-color: #2980b9; /* Aktif bağlantının arka plan rengi */
+    }
+    
+    .sidebar a:hover:not(.active) {
+        background-color: #2980b9; /* Üzerine gelindiğinde arka plan rengi */
+        color: white; /* Üzerine gelindiğinde yazı rengi */
+    }
+    
+    .profile-info p {
+        color: white; /* Yazı rengi */
+        padding: 0 0 10px 30px; /* Padding */
+        text-decoration: underline; /* Altı çizili */
+    }
+    .profile-info h2 {
+        color: white; /* Yazı rengi */
+        padding: 0 0 10px 30px; /* Padding */
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidebar {padding-top: 15px;} /* Küçük ekranlarda üst boşluğu azalt */
+      .sidebar a {font-size: 18px;} /* Küçük ekranlarda yazı boyutunu koru */
+    }
+    
+</style>

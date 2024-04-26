@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="mb-4">Incorrect Questions</h1>
+<div class="container">
+    <ul class="list-unstyled">
+        {% for result in results %}
+        <li>
+            <p>{{ result.question.content }}</p>
+            {% if result.comments_allowed %}
+                <!-- Show past admin comments and user responses -->
+                <ul class="list-unstyled pl-3">
+                    {% for comment in result.admincomment_set.all %}
+                    <li>
+                        <strong>Admin {{ comment.admin.username }}:</strong> {{ comment.comment }}
+                        <ul class="list-unstyled pl-3">
+                            {% for response in comment.userresponse_set.all %}
+                            <li>User {{ response.user.username }}: {{ response.response }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="mt-2">
+                    <form method="post" class="form-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="result_id" value="{{ result.id }}">
+                        <input type="text" class="form-control mr-2" name="comment" placeholder="Add a comment...">
+                        <button type="submit" class="btn btn-primary">Comment</button>
+                    </form>
+                </div>
+                <div class="mt-2">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="result_id" value="{{ result.id }}">
+                        <button name="end_comments" class="btn btn-danger">End Commenting</button>
+                    </form>
+                </div>
+            {% else %}
+                <p class="text-muted">Comments are closed for this question.</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header text-center">
+                    Welcome, {{ username }}
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Email</th>
+                            <td>{{ email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Questions</th>
+                            <td>{{ total_questions }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Categories</th>
+                            <td>{{ total_categories }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Topics</th>
+                            <td>{{ total_topics }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Exams</th>
+                            <td>{{ total_exams }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Questions Attempted</th>
+                            <td>{{ total_attempted }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Correct Answers</th>
+                            <td>{{ total_correct }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Incorrect Answers</th>
+                            <td>{{ total_incorrect }}</td>
+                        </tr>
+                        <tr>
+                            <th>Overall Success Rate</th>
+                            <td>{{ success_rate }}%</td>
+                        </tr>
+                    </table>
+
+                    <div class="progress">
+                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: {{ success_rate }}%;" aria-valuenow="{{ success_rate }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    
+                    <table class="table table-bordered mt-3">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Difficulty Level</th>
+                                <th>Success Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for level, rate in success_rates.items %}
+                            <tr>
+                                <td>{{ level }}</td>
+                                <td>{{ rate }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <h3>Overall Success Rate</h3>
+            <canvas id="overallSuccessChart" width="500px" height="500px"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <h3>Success Rate by Difficulty Level</h3>
+            <canvas id="successRateChart" width="500px" height="500px"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <h3>Quiz Performance Overview</h3>
+            <canvas id="performanceChart" width="500px" height="500px"></canvas>
+        </div>
+    </div>
+
+    <!-- Yanlış cevaplanan soruları listele -->
+    <div class="mt-3">
+        <h2>Incorrect Answers</h2>
+        <button class="btn btn-primary" onclick="showComments()">Show Comments</button>
+        <ul class="list-group mt-2">
+            {% for result in incorrect_results %}
+            <li class="list-group-item">{{ result.question.content }} - Correct: No</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Yorumlar için Popup Penceresi -->
+    <div id="commentsPopup" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comments on Incorrect Answers</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        {% for comment in comments %}
+                        <li class="list-group-item">{{ comment.result.question.content }}: {{ comment.comment }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeComments()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function updateProgressBar(successRate) {
+        var progressBar = document.getElementById("progress-bar");
+        progressBar.style.width = successRate + "%";
+        progressBar.setAttribute("aria-valuenow", successRate);
+    }
+
+    function showComments() {
+        $('#commentsPopup').modal('show');
+    }
+
+    function closeComments() {
+        $('#commentsPopup').modal('hide');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateProgressBar({{ success_rate }});
+
+        var ctx = document.getElementById('successRateChart').getContext('2d');
+        var successRates = {{ success_rates|safe }};
+        var labels = Object.keys(successRates);
+        var data = Object.values(successRates);
+
+        var barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Success Rate (%)',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        var pieCtx = document.getElementById('overallSuccessChart').getContext('2d');
+        var overallSuccessRate = {{ success_rate }};
+        var pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Correct Answers', 'Incorrect Answers'],
+                datasets: [{
+                    label: 'Overall Success Rate',
+                    data: [overallSuccessRate, 100 - overallSuccessRate],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(255, 99, 132, 0.5)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+                
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false
+            }
+        });
+
+        var perfCtx = document.getElementById('performanceChart').getContext('2d');
+        var perfChart = new Chart(perfCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Total Questions', 'Correct Answers', 'Incorrect Answers'],
+                datasets: [{
+                    label: 'Quiz Performance',
+                    data: [{{ total_questions }}, {{ total_correct }}, {{ total_incorrect }}],
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false
+            }
+        });
+    });
+</script>
+{% endblock %}

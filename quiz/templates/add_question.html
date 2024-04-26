@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1 class="mt-5 mb-4">Add Question</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="4" cols="50"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="image">Image:</label>
+            <input type="file" class="form-control-file" id="image" name="image">
+        </div>
+        <div class="form-group">
+            <label for="correct_answer">Correct Answer:</label>
+            <select class="form-control" id="correct_answer" name="correct_answer">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="difficulty">Difficulty:</label>
+            <select class="form-control" id="difficulty" name="difficulty">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select class="form-control" id="category" name="category">
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="topic">Topic:</label>
+            <select class="form-control" id="topic" name="topic">
+                {% for topic in topics %}
+                <option value="{{ topic.id }}">{{ topic.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exam">Exam:</label>
+            <select class="form-control" id="exam" name="exam">
+                {% for exam in exams %}
+                <option value="{{ exam.id }}">{{ exam.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

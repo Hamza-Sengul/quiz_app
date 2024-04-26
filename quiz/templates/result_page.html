@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Result Page</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Difficulty Level</th>
+                    <th>Total Questions</th>
+                    <th>Correct Answers</th>
+                    <th>Success Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for level, data in result_data.items %}
+                <tr>
+                    <td>{{ level }}</td>
+                    <td>{{ data.total_questions }}</td>
+                    <td>{{ data.correct_answers }}</td>
+                    <td>{{ data.success_rate }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Chart.js Grafik Konteyneri -->
+    <div class="mt-5">
+        <canvas id="resultsChart" width="800" height="400"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('resultsChart').getContext('2d');
+    const resultData = {{ result_data|safe }};
+    const labels = Object.keys(resultData);
+    const successRates = Object.values(resultData).map(data => data.success_rate);
+    const totalQuestions = Object.values(resultData).map(data => data.total_questions);
+
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Success Rate (%)',
+                data: successRates,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Total Questions',
+                data: totalQuestions,
+                backgroundColor: 'rgba(255, 206, 86, 0.5)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1,
+                type: 'line',
+                yAxisID: 'yAxisTotalQuestions',
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                yAxisTotalQuestions: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="mb-4">Admin Comments and User Responses</h1>
+<div class="container">
+    {% for comment in comments %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">
+                <strong>{{ comment.result.question.content }}</strong> - Admin: {{ comment.admin.username }}
+            </h5>
+            <p class="card-text">{{ comment.comment }}</p>
+            <ul class="list-group list-group-flush">
+                {% for response in comment.userresponse_set.all %}
+                <li class="list-group-item">User {{ response.user.username }}: {{ response.response }}</li>
+                {% endfor %}
+            </ul>
+            {% if comment.result.comments_allowed and not comment.has_responded %}
+            <div class="card-footer">
+                <form method="post" class="d-flex">
+                    {% csrf_token %}
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <input type="text" class="form-control mr-2" name="response" placeholder="Respond here...">
+                    <button type="submit" class="btn btn-primary">Respond</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="card-footer text-muted">
+                Comments are closed or already responded.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

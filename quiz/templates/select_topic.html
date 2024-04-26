@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <h1 class="mt-5 mb-4">Select a Topic in {{ category.name }}</h1>
+    <ul class="list-group">
+        {% for topic in topics %}
+            <li class="list-group-item">
+                <a href="{% url 'select_exam' topic.id %}" class="text-decoration-none text-dark">{{ topic.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
